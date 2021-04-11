@@ -19,11 +19,17 @@ conda create -n tflite-env python3.7
 ```
 conda activate tflite-env
 ```
-**5. Install requirements:**
+**5. Install requirements for Raspberry Pi or Linux:**
 ```
 bash get_pi_requirements.sh
 ```
+**5. Install requirements for Windows:**
+```
+pip install opencv-python
+
+pip install --extra-index-url https://google-coral.github.io/py-repo/ tflite_runtime
+```
 **6. Run script:**
 ```
-python mask_detection.py --modeldir=mask_detection
+python mask_detection.py --modeldir=mask_model
 ```

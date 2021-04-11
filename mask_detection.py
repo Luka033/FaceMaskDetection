@@ -74,8 +74,8 @@ def inference(frame):
     scores = interpreter.get_tensor(output_details[2]['index'])[0]  # Confidence of detected objects
 
     if (scores[0] > min_conf_threshold) and (scores[0] <= 1.0):
-        # Get bounding box coordinates and draw box
-        # Interpreter can return coordinates that are outside of image dimensions, need to force them to be within image using max() and min()
+        # Get bounding box coordinates and draw box. Interpreter can return coordinates that are outside of image
+        # dimensions, need to force them to be within image using max() and min()
         ymin = int(max(1, (boxes[0][0] * imH)))
         xmin = int(max(1, (boxes[0][1] * imW)))
         ymax = int(min(imH, (boxes[0][2] * imH)))
@@ -113,7 +113,7 @@ def turn_on_light(detection_bit):
 LED_output = -1
 total_time = 0
 timer_start = time.time()
-while video.isOpened():
+while True:
     # Start timer (for calculating frame rate)
     t1 = cv2.getTickCount()
 
@@ -133,7 +133,7 @@ while video.isOpened():
     # All the results have been drawn on the frame, so it's time to display it.
     cv2.imshow('Object detector', frame)
 
-    # Calculate framerate
+    # Calculate frame rate
     t2 = cv2.getTickCount()
     time1 = (t2 - t1) / freq
     frame_rate_calc = 1 / time1
