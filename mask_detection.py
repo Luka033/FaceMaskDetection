@@ -80,17 +80,16 @@ def inference(frame):
 
     if (scores[0] > min_conf_threshold) and (scores[0] <= 1.0):
 
+        # Draw label
+        object_name = labels[int(classes[0])]  # Look up object name from "labels" array using class index
+        label = '%s: %d%%' % (object_name, int(scores[0] * 100))  # Example: 'person: 72%'
+        
         if object_name == 'no mask':
             res = 0
             hub_color = color.red
         if object_name == 'mask':
             res = 1
             hub_color = color.green
-
-        # Draw label
-        object_name = labels[int(classes[0])]  # Look up object name from "labels" array using class index
-        label = '%s: %d%%' % (object_name, int(scores[0] * 100))  # Example: 'person: 72%'
-
         # Get bounding box coordinates and draw box. Interpreter can return coordinates that are outside of image
         # dimensions, need to force them to be within image using max() and min()
         ymin = int(max(1, (boxes[0][0] * imH))) - 40
@@ -101,7 +100,7 @@ def inference(frame):
         topLeft = xmin, ymin
         bottomRight = xmax, ymax
         draw.infoBoxLabel(frame, label, topLeft, bottomRight, hub_color)
-        
+
     return res
 
 
