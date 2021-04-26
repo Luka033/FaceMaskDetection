@@ -11,25 +11,23 @@ Mask detection with tflite on the Raspberry Pi that can be used at entrances. If
 ```
 cd FaceMaskDetection
 ```
-**3. Create conda virtual environment:**
+**3. Download pipenv if you dont have it:**
 ```
-conda create -n tflite-env python3.7
+sudo pip3 install virtualenv
 ```
-**4. Activate pipenv:**
+**4. Create virtual environment:**
 ```
-conda activate tflite-env
+python3 -m venv tflite-env
 ```
-**5. Install requirements for Raspberry Pi or Linux:**
+**5. Activate pipenv:**
+```
+source tflite-env/bin/activate
+```
+**6. Install requirements:**
 ```
 bash get_pi_requirements.sh
 ```
-**5. Install requirements for Windows:**
+**7. Run script:**
 ```
-pip install opencv-python
-
-pip install --extra-index-url https://google-coral.github.io/py-repo/ tflite_runtime
-```
-**6. Run script:**
-```
-python mask_detection.py --modeldir=mask_model
+python3 mask_detection.py --modeldir=mask_model
 ```

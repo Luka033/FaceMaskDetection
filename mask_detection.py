@@ -4,6 +4,9 @@ import cv2
 import numpy as np
 from tflite_runtime.interpreter import Interpreter
 import time
+import RPi.GPIO as GPIO
+from pydub import AudioSegment
+from pydub.playback import play
 
 # Define and parse input arguments
 parser = argparse.ArgumentParser()
@@ -45,8 +48,10 @@ floating_model = (input_details[0]['dtype'] == np.float32)
 input_mean = 127.5
 input_std = 127.5
 
+
+
 # Open video file
-video = cv2.VideoCapture(1)
+video = cv2.VideoCapture(0)
 imW = video.get(cv2.CAP_PROP_FRAME_WIDTH)
 imH = video.get(cv2.CAP_PROP_FRAME_HEIGHT)
 
@@ -81,7 +86,8 @@ def inference(frame):
         ymax = int(min(imH, (boxes[0][2] * imH)))
         xmax = int(min(imW, (boxes[0][3] * imW)))
 
-        cv2.rectangle(frame, (xmin, ymin), (xmax, ymax), (10, 255, 0), 4)
+        
+        
 
         # Draw label
         object_name = labels[int(classes[0])]  # Look up object name from "labels" array using class index
@@ -93,6 +99,9 @@ def inference(frame):
                       cv2.FILLED)  # Draw white box to put label text in
         cv2.putText(frame, label, (xmin, label_ymin - 7), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 0),
                     2)  # Draw label text
+        
+        rect_color = (10, 255, 0) if object_name == 'mask' else (0, 0, 255)
+        cv2.rectangle(frame, (xmin, ymin), (xmax, ymax), rect_color, 4)
 
         if object_name == 'no mask':
             return 0
@@ -101,14 +110,30 @@ def inference(frame):
     return -1
 
 
-def turn_on_light(detection_bit):
+def turn_on_light(detection_bit):  
     if detection_bit == 1:
-        print('GREEN')
+        GPIO.output(23, GPIO.LOW)
+        GPIO.output(18, GPIO.HIGH)
+        play(welcome_sound)
     elif detection_bit == 0:
-        print('RED')
+        GPIO.output(18, GPIO.LOW)
+        GPIO.output(23, GPIO.HIGH)
+        play(denied_sound)
     else:
+        GPIO.output(18, GPIO.LOW)
+        GPIO.output(23, GPIO.LOW)
         print('NO LIGHT')
+        
 
+
+# Setup LED breadboard
+GPIO.setmode(GPIO.BCM)
+GPIO.setup(18, GPIO.OUT)
+GPIO.setup(23, GPIO.OUT)
+
+
+welcome_sound = AudioSegment.from_file('media/granted.flac')
+denied_sound = AudioSegment.from_file('media/denied.flac')
 
 LED_output = -1
 total_time = 0
@@ -146,5 +171,6 @@ while True:
         break
 
 # Clean up
+GPIO.cleanup()
 video.release()
 cv2.destroyAllWindows()
