@@ -6,6 +6,9 @@ from tflite_runtime.interpreter import Interpreter
 import colors as color
 import draw_utils as draw
 import time
+import RPi.GPIO as GPIO
+from pydub import AudioSegment
+from pydub.playback import play
 
 # Define and parse input arguments
 parser = argparse.ArgumentParser()
@@ -47,6 +50,8 @@ floating_model = (input_details[0]['dtype'] == np.float32)
 input_mean = 127.5
 input_std = 127.5
 
+
+
 # Open video file
 video = cv2.VideoCapture(0)
 imW = video.get(cv2.CAP_PROP_FRAME_WIDTH)
@@ -80,10 +85,11 @@ def inference(frame):
 
     if (scores[0] > min_conf_threshold) and (scores[0] <= 1.0):
 
+
         # Draw label
         object_name = labels[int(classes[0])]  # Look up object name from "labels" array using class index
         label = '%s: %d%%' % (object_name, int(scores[0] * 100))  # Example: 'person: 72%'
-        
+
         if object_name == 'no mask':
             res = 0
             hub_color = color.red
@@ -104,14 +110,30 @@ def inference(frame):
     return res
 
 
-def turn_on_light(detection_bit):
+def turn_on_light(detection_bit):  
     if detection_bit == 1:
-        print('GREEN')
+        GPIO.output(23, GPIO.LOW)
+        GPIO.output(18, GPIO.HIGH)
+        play(welcome_sound)
     elif detection_bit == 0:
-        print('RED')
+        GPIO.output(18, GPIO.LOW)
+        GPIO.output(23, GPIO.HIGH)
+        play(denied_sound)
     else:
+        GPIO.output(18, GPIO.LOW)
+        GPIO.output(23, GPIO.LOW)
         print('NO LIGHT')
+        
 
+
+# Setup LED breadboard
+GPIO.setmode(GPIO.BCM)
+GPIO.setup(18, GPIO.OUT)
+GPIO.setup(23, GPIO.OUT)
+
+
+welcome_sound = AudioSegment.from_file('media/granted.flac')
+denied_sound = AudioSegment.from_file('media/denied.flac')
 
 LED_output = -1
 total_time = 0
@@ -156,5 +178,6 @@ while video.isOpened():
         break
 
 # Clean up
+GPIO.cleanup()
 video.release()
 cv2.destroyAllWindows()

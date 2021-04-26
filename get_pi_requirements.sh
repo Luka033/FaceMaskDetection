@@ -7,6 +7,11 @@ sudo apt-get -y install libavcodec-dev libavformat-dev libswscale-dev libv4l-dev
 sudo apt-get -y install libxvidcore-dev libx264-dev
 sudo apt-get -y install qt4-dev-tools libatlas-base-dev
 
+
+# To play sound
+sudo apt-get install ffmpeg libavcodec-extra
+pip3 install pydub
+
 # Need to get an older version of OpenCV because version 4 has errors
 pip3 install opencv-python==3.4.6.27
 
