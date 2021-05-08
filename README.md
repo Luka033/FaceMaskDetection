@@ -1,7 +1,7 @@
 # Mask Detection System
 Mask detection with tflite on the Raspberry Pi that can be used at entrances. If an entering person is wearing a mask a green LED is turned on. If an entering person is not wearing a mask a red LED is turned on.
 
-[![IMAGE ALT TEXT HERE](https://img.youtube.com/vi/GJLy0X9fAs/0.jpg)](https://www.youtube.com/watch?v=GJLy0X9fAs)
+[![IMAGE ALT TEXT HERE](https://img.youtube.com/vi/-GJLy0X9fAs/0.jpg)](https://www.youtube.com/watch?v=-GJLy0X9fAs)
 
 ---
 
